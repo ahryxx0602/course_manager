@@ -1,5 +1,7 @@
 <?php
 const _ROOT_PATH = true;
+const _MODULE_ = 'dashboard';
+const _ACTION_ = 'index';
 // Cấu hình kết nối cơ sở dữ liệu
 const _HOST = 'localhost';
 const _DB = 'course_manager';
