@@ -4,7 +4,7 @@ session_start(); // Start a new session or resume the existing session
 ob_start(); // Start output buffering
 
 require_once './config.php'; // Include the configuration file
-
+require_once './includes/connect.php'; // Include the database connection file
 
 $module = _MODULE_;
 $action = _ACTION_;
@@ -18,7 +18,6 @@ if(!empty($_GET['action'])) {
 $path = './modules/' . $module . '/' . $action . '.php';
 if(!empty($path)) {
               if(file_exists($path)) {
-                            echo "Ket noi thanh cong";
                             require_once $path;
               } else {
                             require_once './modules/errors/404.php';
