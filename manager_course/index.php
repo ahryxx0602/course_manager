@@ -17,7 +17,7 @@ require_once './includes/mailer/SMTP.php';
 require_once './includes/functions.php';
 
 
-senMail('phvanthanh06@gmail.com', 'TEST-MAIL','Hello from server.');
+// senMail('phvanthanh06@gmail.com', 'TEST-MAIL','Hello from server.');
 
 // setSessionFlash('Ahryxx', 'php');
 $module = _MODULE_;
