@@ -7,9 +7,17 @@ require_once './config.php'; // Include the configuration file
 require_once './includes/connect.php'; // Include the database connection file
 require_once './includes/database.php'; // Include the database functions file
 require_once './includes/session.php';
-require_once './templates/layouts/index.php';
+//Nhúng trước file function
+//Email
+require_once './includes/mailer/Exception.php';
+require_once './includes/mailer/PHPMailer.php';
+require_once './includes/mailer/SMTP.php';
+
+
 require_once './includes/functions.php';
 
+
+senMail('phvanthanh06@gmail.com', 'TEST-MAIL','Hello from server.');
 
 // setSessionFlash('Ahryxx', 'php');
 $module = _MODULE_;
