@@ -6,6 +6,16 @@ ob_start(); // Start output buffering
 require_once './config.php'; // Include the configuration file
 require_once './includes/connect.php'; // Include the database connection file
 require_once './includes/database.php'; // Include the database functions file
+require_once './includes/session.php';
+
+
+// setSessionFlash('Ahryxx', 'php');
+$rel = getSessionFlash('Ahryxx');
+echo $rel;
+echo '<pre>';
+print_r($_SESSION);
+echo '</pre>';
+die();
 $module = _MODULE_;
 $action = _ACTION_;
 if(!empty($_GET['module'])) {
@@ -26,15 +36,3 @@ if(!empty($path)) {
               require_once './modules/errors/505.php';
 }
 
-$rel = getAll("SELECT * FROM courses");
-// echo '<pre>';
-// print_r($rel);
-// echo '</pre>';
-$data = [
-    'name' => 'Học PHP Cơ bản',
-    'slug'=> 'hoc-php-co-ban',
-];
-
-
-$condition = 'id = 1';
-deleteData('courses', $condition);
