@@ -5,6 +5,8 @@ ob_start(); // Start output buffering
 
 require_once './config.php'; // Include the configuration file
 require_once './includes/connect.php'; // Include the database connection file
+require_once './includes/database.php'; // Include the database functions file
+
 
 $module = _MODULE_;
 $action = _ACTION_;
@@ -25,3 +27,14 @@ if(!empty($path)) {
 } else {
               require_once './modules/errors/505.php';
 }
+
+$rel = getAll("SELECT * FROM courses");
+// echo '<pre>';
+// print_r($rel);
+// echo '</pre>';
+$data = [
+    'name' => 'Học PHP Cơ bản',
+    'slug'=> 'hoc-php-co-ban',
+];
+$condition = 'id = 1';
+$update = updateData('course_category', $data, $condition);
