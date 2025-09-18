@@ -2,7 +2,7 @@
 if(!defined('_ROOT_PATH')) {
     die('Truy cập không hợp lệ!');
 }
-    require_once './templates/layouts/header-auth.php';
+    layout("header-auth");
 ?>
 <section class="vh-100">
   <div class="container-fluid h-custom">
@@ -42,5 +42,5 @@ if(!defined('_ROOT_PATH')) {
     </div>
   </div>
 <?php
-    require_once './templates/layouts/footer-auth.php';
+    layout("footer-auth");
 ?>

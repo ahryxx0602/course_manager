@@ -8,6 +8,7 @@ require_once './includes/connect.php'; // Include the database connection file
 require_once './includes/database.php'; // Include the database functions file
 require_once './includes/session.php';
 require_once './templates/layouts/index.php';
+require_once './includes/functions.php';
 
 
 // setSessionFlash('Ahryxx', 'php');

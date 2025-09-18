@@ -2,13 +2,10 @@
 if(!defined('_ROOT_PATH')) {
     die('Truy cập không hợp lệ!');
 }
-        require_once './templates/layouts/header.php';
-                require_once './templates/layouts/sidebar.php';
+        layout("header");
+        layout("sidebar");
 ?>
       <main class="app-main">
-        <?php
-            require_once './templates/layouts/breadcrumb.php';
-        ?>
         <!--begin::App Content-->
         <div class="app-content">
           <!--begin::Container-->
@@ -144,5 +141,5 @@ if(!defined('_ROOT_PATH')) {
       </main>
 
       <?php
-        require_once './templates/layouts/footer.php';
+        layout("footer");
       ?>
