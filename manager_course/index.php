@@ -6,8 +6,6 @@ ob_start(); // Start output buffering
 require_once './config.php'; // Include the configuration file
 require_once './includes/connect.php'; // Include the database connection file
 require_once './includes/database.php'; // Include the database functions file
-
-
 $module = _MODULE_;
 $action = _ACTION_;
 if(!empty($_GET['module'])) {
@@ -36,5 +34,7 @@ $data = [
     'name' => 'Học PHP Cơ bản',
     'slug'=> 'hoc-php-co-ban',
 ];
+
+
 $condition = 'id = 1';
-$update = updateData('course_category', $data, $condition);
+deleteData('courses', $condition);

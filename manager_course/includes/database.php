@@ -27,6 +27,17 @@ function getOnce($sql){
     return $result;
 }
 
+//
+function getRows($sql){
+    global $conn;
+    $stm = $conn -> prepare($sql);
+
+    $stm -> execute();
+
+    $rel = $stm -> rowCount();
+    return $rel;
+}
+
 // INSERT DỮ LIỆU
 
 function insertData($table, $data){
@@ -67,4 +78,28 @@ function updateData($table, $data, $condition =''){
     //Thực thi câu lệnh
     $tmp -> execute($data);
 
+}
+
+// DELETE
+
+function deleteData($table, $condition=''){
+    global $conn;
+
+    if(!empty($condition)){
+    $sql = "DELETE FROM $table WHERE $condition";
+    } else {
+        $sql = "DELETE FROM $table";
+    }
+
+    $stm = $conn -> prepare($sql);
+
+    $stm -> execute();
+}
+
+// Lấy id dữ liệu moiiws INSERT
+
+function lastID(){
+    global $conn;
+
+    return $conn -> lastInsertId();
 }
