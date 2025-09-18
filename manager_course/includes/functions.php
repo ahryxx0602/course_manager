@@ -126,3 +126,36 @@ function filterData($method=''){
     }
     return $filterArr;
 }
+
+function validateEmail($email){
+    if(!empty($email)){
+        $checkEmail = filter_var($email, FILTER_VALIDATE_EMAIL);
+    } 
+    return $checkEmail;
+}
+
+function validateInt($number){
+    if(!empty($number)){
+        $checkNumber = filter_var($number, FILTER_VALIDATE_INT);
+    } 
+    return $checkNumber;
+}
+
+// validate phone 0123456789
+function isPhone($phone){
+    $phoneFirst = false;
+    if($phone[0] == '0'){
+        $phoneFirst = true;
+        $phone = substr($phone, 1);
+    }
+    $checkPhone = false;
+    if(validateInt($phone)){
+        $checkPhone = true;
+    }
+    if($phoneFirst && $checkPhone){
+        return true;
+    }
+
+    return false;
+}
+

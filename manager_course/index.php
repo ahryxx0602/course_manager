@@ -16,7 +16,23 @@ require_once './includes/mailer/SMTP.php';
 
 require_once './includes/functions.php';
 
+$password = '123456';
+$relPass = password_hash($password, PASSWORD_DEFAULT);
 
+$password_user_input = '123456';
+$relHash = password_verify($password_user_input, $relPass);
+$rel = isPhone('0327461459');
+if($rel){
+              echo "Số điện thoại hợp lệ.";
+} else {
+              echo "Không hợp lệ";
+}
+
+if($relHash){
+              echo "MK Khớp";
+} else {
+              echo "MK không khớp";
+}
 // senMail('phvanthanh06@gmail.com', 'TEST-MAIL','Hello from server.');
 
 // setSessionFlash('Ahryxx', 'php');
