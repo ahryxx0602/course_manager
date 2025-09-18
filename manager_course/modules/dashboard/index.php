@@ -2,7 +2,10 @@
 if(!defined('_ROOT_PATH')) {
     die('Truy cập không hợp lệ!');
 }
-        layout("header");
+      $data = [
+      'title' => 'Dashboard Admin'
+    ];
+        layout("header", $data);
         layout("sidebar");
 ?>
       <main class="app-main">

@@ -8,7 +8,7 @@ $pageTitle = $pageTitle ?? 'Đăng nhập';
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <title><?= htmlspecialchars($pageTitle) ?> | Admin</title>
+  <title> <?php echo $data['title']; ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Font (Source Sans 3) -->

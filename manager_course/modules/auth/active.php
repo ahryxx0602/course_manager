@@ -2,7 +2,10 @@
 if(!defined('_ROOT_PATH')) {
     die('Truy cập không hợp lệ!');
 }
-    layout("header-auth");
+    $data = [
+      'title' => 'Xác thực hệ thống'
+    ];
+    layout("header-auth", $data);
 ?>
 <section class="vh-100">
   <div class="container-fluid h-custom">
