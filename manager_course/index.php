@@ -11,12 +11,6 @@ require_once './templates/layouts/index.php';
 
 
 // setSessionFlash('Ahryxx', 'php');
-$rel = getSessionFlash('Ahryxx');
-echo $rel;
-echo '<pre>';
-print_r($_SESSION);
-echo '</pre>';
-die();
 $module = _MODULE_;
 $action = _ACTION_;
 if(!empty($_GET['module'])) {
