@@ -130,14 +130,14 @@ function filterData($method=''){
 function validateEmail($email){
     if(!empty($email)){
         $checkEmail = filter_var($email, FILTER_VALIDATE_EMAIL);
-    } 
+    }
     return $checkEmail;
 }
 
 function validateInt($number){
     if(!empty($number)){
         $checkNumber = filter_var($number, FILTER_VALIDATE_INT);
-    } 
+    }
     return $checkNumber;
 }
 

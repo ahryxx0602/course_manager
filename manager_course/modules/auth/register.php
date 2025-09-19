@@ -6,6 +6,70 @@ if(!defined('_ROOT_PATH')) {
       'title' => 'Đăng ký tài khoản'
     ];
     layout("header-auth", $data);
+
+    if(isPOST()){
+      $filter = filterData();
+      $errors = [];
+
+      //Validate fullName
+      if(empty(trim($filter['fullName']))){
+        $error['fullName']['require'] = "Họ tên bắt buộc phải nhập.";
+      } else {
+        if(trim(strlen($filter['fullName'])) < 5){
+          $errors['fullName']['length'] = "Họ tên bắt buộc phải trên 5 kí tự.";
+        }
+      }
+
+      // Validate email
+      if(empty(trim($filter['email']))){
+        $error['email']['require'] = "Email bắt buộc phải nhập.";
+      } else {
+        // ĐÚng định dang ? , email exist?
+        if(!validateEmail(trim($filter['email']))){
+          $errors['email']['length'] = "Email không đúng định dạng.";
+        } else {
+          $email = $filter['email'];
+
+          $checkEmail = getRows("SELECT * FROM users WHERE email = '$email'");
+          if($checkEmail > 0){
+            $errors['email']['check'] = "Email đã có trong hệ thống.";
+          }
+        }
+      }
+
+      //Validate phone
+      if(empty($filter['phone'])){
+        $error['phone']['require'] = "Số điện thoại bắt buộc phải nhập.";
+      } else {
+        if(!isPhone($filter['phone'])){
+          $errors['phone']['isPhone'] = "Số điện thoại không đúng định dạng.";
+        }
+      }
+
+      //Validate Password
+      if(empty($filter['password'])){
+        $errors['password']['require'] = "Mật khẩu bắt buộc phải nhập.";
+      } else {
+        if(strlen(trim($filter['password']))<6){
+          $errors['password']['length'] = "Mật khẩu phải lớn hơn 6 ký tự.";
+        }
+      }
+
+      //validate confirm password
+      if(empty($filter['confirmPassword'])){
+        $errors['confirmPassword']['require'] = "Vui lòng nhập lại mật khẩu.";
+      } else {
+        if(trim($filter['password']) !== trim($filter['confirmPassword'])){
+          $errors['confirmPassword']['length'] = "Mật khẩu nhập lại không khớp.";
+        }
+      }
+
+      if(!empty($errors)){
+        echo '<pre>';
+        print_r($errors);
+        echo '</pre>';
+      }
+    }
 ?>
 <section class="vh-100">
   <div class="container-fluid h-custom">
