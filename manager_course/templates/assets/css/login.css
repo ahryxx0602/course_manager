@@ -13,3 +13,46 @@
     height: 100%;
   }
 }
+
+.form-outline {
+  position: relative;
+  padding-bottom: 18px;
+}
+
+.error {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  margin: 0;
+  line-height: 1.2;
+  font-size: 0.85rem;
+  color: #dc3545;
+  font-style: italic;
+  pointer-events: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.announce-message {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  display: inline-block;
+  text-align: center;
+  pointer-events: none;
+}
+
+.announce-message.alert {
+  margin-bottom: 0;
+}
+
+.auth-box {
+  position: relative;
+  padding-top: 48px;
+}
