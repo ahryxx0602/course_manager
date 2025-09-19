@@ -52,4 +52,6 @@ function getSessionFlash($key){
     $rel = getSession($key);
 
     removeSession($key);
+
+    return $rel;
 }
