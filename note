@@ -1,6 +1,0 @@
-CODE TÍNH NĂNG ĐĂNG KÝ TÀI KHOẢN
-
-- Kiểm tra và xử lý dữ liệu đầu vào ởn form đăng ký (Dữ liệu sạch)
-- Insert Data vào bảng users trong database
-- Gửi mail kích hoạt cho người dùng
-- Người dùng click vào link kích hoạt
