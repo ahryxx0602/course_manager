@@ -9,6 +9,7 @@ if(!defined('_ROOT_PATH')) {
     $msg = '';
     $msg_type = '';
     $errorsArr = [];
+    $oldData = [];
 
     if(isPOST()){
       $filter = filterData();
@@ -58,6 +59,24 @@ if(!defined('_ROOT_PATH')) {
         }
       }
 
+      // if(!empty($filter['password'])){
+      //     $password = trim($filter['password']);
+      //     if(strlen($password) <br 6){
+      //         $errors['password']['length'] = "Mật khẩu phải lớn hơn 6 ký tự.";
+      //     } else {
+      //         if(!preg_match('/[A-Z]/', $password)){
+      //             $errors['password']['uppercase'] = "Mật khẩu phải có ít nhất 1 chữ in hoa.";
+      //         }
+      //         if(!preg_match('/[0-9]/', $password)){
+      //             $errors['password']['number'] = "Mật khẩu phải có ít nhất 1 chữ số.";
+      //         }
+      //         if(!preg_match('/[\W]/', $password)){
+      //             // \W: ký tự không phải chữ và số
+      //             $errors['password']['special'] = "Mật khẩu phải có ít nhất 1 ký tự đặc biệt.";
+      //         }
+      //     }
+      // }
+
       //validate confirm password
       if(empty($filter['confirmPassword'])){
         $errors['confirmPassword']['require'] = "Vui lòng nhập lại mật khẩu.";
@@ -68,15 +87,53 @@ if(!defined('_ROOT_PATH')) {
       }
 
       if(empty($errors)){
-        // Không lỗi
-        $msg = 'Đăng ký thành công!';
-        $msg_type = 'success';
-      } else {
-        $msg = 'Dữ liệu không hợp lệ, hãy kiểm tra lại !!';
-        $msg_type='danger';
+        // Không lỗi table: users
+        $active_token = sha1(uniqid().time());
+        $data = [
+          'fullName' => $filter['fullName'],
+          'email' => $filter['email'],
+          'phone' => $filter['phone'],
+          'password' => $filter['password'],
+          'active_token' => $active_token,
+          'group_id' => 1,
+          'created_at' => date('Y:m:d H:i:s'),
+        ];
 
+        $InsertStatus = insertData('users', $data);
+
+        if(($InsertStatus)){
+          // Gửi email
+          $activateUrl = _HOST_URL . '/?module=auth&action=active&token=' . urlencode($active_token);
+          $emailTo = $filter['email'];
+          $subject = '🎉 Kích hoạt tài khoản Hệ thống quản lý khóa học';
+          $content = "
+                    Xin chào,<br><br>
+                    Chúc mừng bạn đã đăng ký tài khoản tại <b>Hệ thống Quản lý Khóa học</b>.<br><br>
+                    Vui lòng kích hoạt tài khoản bằng liên kết sau:<br>
+                    <a href='$activateUrl'>$activateUrl</a><br><br>
+                    Nếu bạn không thực hiện đăng ký, hãy bỏ qua email này.<br><br>
+                    Cảm ơn bạn!
+                    ";
+
+
+
+          senMail($emailTo, $subject, $content);
+
+          setSessionFlash('msg', 'Đăng ký thành công, vui lòng kích hoạt tài khoản.');
+          setSessionFlash('msg_type', 'success');
+        } else {
+          setSessionFlash('msg', 'Đăng ký không thành công, xin vui lòng thử lại.');
+          setSessionFlash('msg_type', 'danger');
+        }
+      } else {
+        setSessionFlash('msg', 'Dữ liệu không hợp lệ, hãy kiểm tra lại !!');
+        setSessionFlash('msg_type', 'danger');
+        setSessionFlash('oldData', $filter);
         setSessionFlash('errors', $errors);
       }
+      $msg = getSessionFlash('msg');
+      $msg_type = getSessionFlash('msg_type');
+      $oldData = getSessionFlash('oldData');
       $errorsArr = getSessionFlash('errors');
     }
 ?>
@@ -98,13 +155,13 @@ if(!defined('_ROOT_PATH')) {
           </div>
             <!-- Fullname input -->
             <div data-mdb-input-init class="form-outline mb-4">
-                <input name='fullName' type="text" class="form-control form-control-lg"
+                <input name='fullName' type="text" value="<?php echo oldData($oldData, 'fullName') ?>" class="form-control form-control-lg"
                 placeholder="Nhập tên của bạn" />
                 <?= formError($errorsArr, 'fullName'); ?>
             </div>
           <!-- Email input -->
           <div data-mdb-input-init class="form-outline mb-4">
-            <input name='email' type="email" class="form-control form-control-lg"
+            <input name='email' type="email" value="<?php echo oldData($oldData, 'email') ?>" class="form-control form-control-lg"
               placeholder="Nhập địa chỉ email" />
               <?= formError($errorsArr, 'email'); ?>
           </div>
@@ -112,7 +169,7 @@ if(!defined('_ROOT_PATH')) {
 
             <!-- Phone input -->
             <div data-mdb-input-init class="form-outline mb-4">
-                <input name='phone' type="text" class="form-control form-control-lg"
+                <input name='phone' type="text" value="<?php echo oldData($oldData, 'phone') ?>" class="form-control form-control-lg"
               placeholder="Nhập số điện thoại" />
               <?= formError($errorsArr, 'phone'); ?>
             </div>
