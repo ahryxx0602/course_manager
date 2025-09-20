@@ -89,10 +89,10 @@ if(!defined('_ROOT_PATH')) {
           'fullName' => $filter['fullName'],
           'email' => $filter['email'],
           'phone' => $filter['phone'],
-          'password' => $filter['password'],
+          'password' => password_hash(trim($filter['password']), PASSWORD_DEFAULT),
           'active_token' => $active_token,
           'group_id' => 1,
-          'created_at' => date('Y:m:d H:i:s'),
+          'created_at' => date('Y-m-d H:i:s'),
         ];
 
         $InsertStatus = insertData('users', $data);
@@ -176,7 +176,8 @@ if(!defined('_ROOT_PATH')) {
 
           <!-- Password input -->
           <div data-mdb-input-init class="form-outline mb-3">
-            <input name='password' type="password" class="form-control form-control-lg"
+            <input name='password' type="password" 
+              class="form-control form-control-lg"
               placeholder="Nhập mật khẩu" />
               <?php if(!empty($errorsArr)){ echo formError($errorsArr, 'password');}?>
           </div>
@@ -191,7 +192,7 @@ if(!defined('_ROOT_PATH')) {
             <button  type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
               style="padding-left: 2.5rem; padding-right: 2.5rem;">Đăng ký</button>
             <p class="small fw-bold mt-2 pt-1 mb-0">Bạn đã có tài khoản<a href="<?php echo _HOST_URL; ?>?module=auth&action=login"
-                class="link-danger"> Đăng nhập</a></p>
+                class="link-danger"> Đăng ký</a></p>
           </div>
         </form>
       </div>

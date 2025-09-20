@@ -17,7 +17,7 @@ function getAll($sql){
     return $result;
 }
 // LẤY 1 BẢN GHI
-function getOnce($sql){
+function getOne($sql){
     global $conn;
     $stm = $conn -> prepare($sql);
 

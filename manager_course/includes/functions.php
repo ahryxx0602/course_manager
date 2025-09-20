@@ -175,3 +175,16 @@ function formError($errors, $fieldName){
 function oldData($oldData, $fieldName){
     return (!empty($oldData[$fieldName]) ? $oldData[$fieldName] : null);
 }
+
+//Hàm điều hướng
+
+function redirect($path, $pathFull = false){
+    if($pathFull){
+        header("location: $path" );
+        exit();
+    } else{
+        $url= _HOST_URL.$path;
+        header("location: $url");
+        exit();
+    }
+}
