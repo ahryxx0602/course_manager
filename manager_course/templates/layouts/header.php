@@ -2,6 +2,10 @@
 if(!defined('_ROOT_PATH')) {
     die('Truy cập không hợp lệ!');
 }
+
+if(!isLogin()) {
+  redirect('?module=auth&action=login');
+}
 ?>
 
 
