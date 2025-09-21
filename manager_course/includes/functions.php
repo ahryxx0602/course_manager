@@ -1,11 +1,12 @@
 <?php
-if(!defined('_ROOT_PATH')) {
+if (!defined('_ROOT_PATH')) {
     die('Truy cập không hợp lệ!');
 }
 
-function layout($layoutName, $data = []){
-    if(file_exists(_PATH_URL_TEMPLATES . '/layouts/'.$layoutName. '.php')){
-        require_once _PATH_URL_TEMPLATES . '/layouts/'.$layoutName. '.php';
+function layout($layoutName, $data = [])
+{
+    if (file_exists(_PATH_URL_TEMPLATES . '/layouts/' . $layoutName . '.php')) {
+        require_once _PATH_URL_TEMPLATES . '/layouts/' . $layoutName . '.php';
     }
 }
 
@@ -15,7 +16,8 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 
-function senMail($emailTo, $subject, $body){
+function senMail($emailTo, $subject, $body)
+{
     $mail = new PHPMailer(true);
 
     try {
@@ -40,85 +42,88 @@ function senMail($emailTo, $subject, $body){
         $mail->Body    = $body;
 
         $mail->SMTPOptions = array(
-        'ssl' => [
-            'verify_peer' => true,
-            'verify_depth' => 3,
-            'allow_self_signed' => true,
-        ],
-    );
+            'ssl' => [
+                'verify_peer' => true,
+                'verify_depth' => 3,
+                'allow_self_signed' => true,
+            ],
+        );
 
-    return $mail->send();
+        return $mail->send();
     } catch (Exception $e) {
         echo "Gửi thất bại: {$mail->ErrorInfo}";
     }
 }
 
 // Kiểm tra phương thức POST
-function isPOST(){
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
+function isPOST()
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         return true;
     }
     return false;
 }
 
 // Kiểm tra phương thức GET
-function isGET(){
-    if($_SERVER['REQUEST_METHOD'] == 'GET'){
+function isGET()
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         return true;
     }
     return false;
 }
 
 //Lọc dữ liệu
-function filterData($method=''){
+function filterData($method = '')
+{
     $filterArr = [];
-    if(empty($method)){
-        if(isGET()){
-            if(!empty($_GET)){
-                foreach($_GET as $key => $value){
+    if (empty($method)) {
+        if (isGET()) {
+            if (!empty($_GET)) {
+                foreach ($_GET as $key => $value) {
                     $key = strip_tags($key);
-                    if(is_array($value)){
+                    if (is_array($value)) {
                         $filterArr[$key] = filter_var($_GET[$key], FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
-                    } else{
+                    } else {
                         $filterArr[$key] = filter_var($_GET[$key], FILTER_SANITIZE_SPECIAL_CHARS);
                     }
                 }
             }
         }
-        if(isPOST()){
-            if(!empty($_POST)){
-                if(!empty($_POST)){
-                    foreach($_POST as $key => $value){
+        if (isPOST()) {
+            if (!empty($_POST)) {
+                if (!empty($_POST)) {
+                    foreach ($_POST as $key => $value) {
                         $key = strip_tags($key);
-                        if(is_array($value)){
+                        if (is_array($value)) {
                             $filterArr[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
-                        } else{
-                            $filterArr[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS); 
+                        } else {
+                            $filterArr[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
                         }
                     }
                 }
             }
         }
     } else {
-        if($method == 'get'){
-            if(!empty($_GET)){
-                foreach($_GET as $key => $value){
+        if ($method == 'get') {
+            if (!empty($_GET)) {
+                foreach ($_GET as $key => $value) {
                     $key = strip_tags($key);
-                    if(is_array($value)){
+                    if (is_array($value)) {
                         $filterArr[$key] = filter_var($_GET[$key], FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
-                    } else{
+                    } else {
                         $filterArr[$key] = filter_var($_GET[$key], FILTER_SANITIZE_SPECIAL_CHARS);
                     }
                 }
             }
-        } else if($method == 'post'){
-            if(!empty($_POST)){
-                foreach($_POST as $key => $value){
+        } else if ($method == 'post') {
+            if (!empty($_POST)) {
+                foreach ($_POST as $key => $value) {
                     $key = strip_tags($key);
-                    if(is_array($value)){
+                    if (is_array($value)) {
                         $filterArr[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
-                    } else{
-                        $filterArr[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS); 
+                    } else {
+                        $filterArr[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
                     }
                 }
             }
@@ -127,32 +132,35 @@ function filterData($method=''){
     return $filterArr;
 }
 
-function validateEmail($email){
-    if(!empty($email)){
+function validateEmail($email)
+{
+    if (!empty($email)) {
         $checkEmail = filter_var($email, FILTER_VALIDATE_EMAIL);
     }
     return $checkEmail;
 }
 
-function validateInt($number){
-    if(!empty($number)){
+function validateInt($number)
+{
+    if (!empty($number)) {
         $checkNumber = filter_var($number, FILTER_VALIDATE_INT);
     }
     return $checkNumber;
 }
 
 // validate phone 0123456789
-function isPhone($phone){
+function isPhone($phone)
+{
     $phoneFirst = false;
-    if($phone[0] == '0'){
+    if ($phone[0] == '0') {
         $phoneFirst = true;
         $phone = substr($phone, 1);
     }
     $checkPhone = false;
-    if(validateInt($phone)){
+    if (validateInt($phone)) {
         $checkPhone = true;
     }
-    if($phoneFirst && $checkPhone){
+    if ($phoneFirst && $checkPhone) {
         return true;
     }
 
@@ -161,29 +169,33 @@ function isPhone($phone){
 
 //Thông báo lỗi
 
-function getMessage($msg, $type ='success'){
-    echo '<div class="announce-message alert alert-'. $type. '">';
+function getMessage($msg, $type = 'success')
+{
+    echo '<div class="announce-message alert alert-' . $type . '">';
     echo $msg;
     echo '</div>';
 }
 
 //Hiển thị lỗi
-function formError($errors, $fieldName){
-    return (!empty($errors[$fieldName])) ? '<div class="error">' .reset($errors[$fieldName]) . '</div>' : false; 
+function formError($errors, $fieldName)
+{
+    return (!empty($errors[$fieldName])) ? '<div class="error">' . reset($errors[$fieldName]) . '</div>' : false;
 }
 
-function oldData($oldData, $fieldName){
+function oldData($oldData, $fieldName)
+{
     return (!empty($oldData[$fieldName]) ? $oldData[$fieldName] : null);
 }
 
 //Hàm điều hướng
 
-function redirect($path, $pathFull = false){
-    if($pathFull){
-        header("location: $path" );
+function redirect($path, $pathFull = false)
+{
+    if ($pathFull) {
+        header("location: $path");
         exit();
-    } else{
-        $url= _HOST_URL.$path;
+    } else {
+        $url = _HOST_URL . $path;
         header("location: $url");
         exit();
     }
@@ -191,13 +203,14 @@ function redirect($path, $pathFull = false){
 
 //Check login
 
-function isLogin(){
+function isLogin()
+{
     $checkLogin = false;
     $tokenLogin = getSessionFlash('token_login');
     $checkToken = getOne("SELECT * FROM token_login WHERE token = '$tokenLogin'");
-    if(!empty($checkToken)) {
+    if (!empty($checkToken)) {
         $checkLogin = true;
-    } else{
+    } else {
         removeSession('token_login');
     }
     return $checkLogin;

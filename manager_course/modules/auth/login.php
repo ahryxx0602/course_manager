@@ -30,7 +30,7 @@ if ((isPOST())) {
     }
   }
 
-  if(empty($errors)){
+  if (empty($errors)) {
     //Kiểm tra dữ liệu
     $email = $filter['email'];
     $password = $filter['password'];
@@ -40,51 +40,57 @@ if ((isPOST())) {
 
     if (!empty($checkEmail)) {
       $checkStatus = password_verify($password, $checkEmail["password"]);
-      if($checkStatus) {
-        // Tạo token insert vào token_login
-        $token = sha1(uniqid().time());
+      if ($checkStatus) {
+        // Tài khoản chỉ login 1 nơi
+        $user_id = $checkEmail['id'];
+        $checkAlready = getRows("SELECT * FROM token_login WHERE user_id = $user_id");
 
-        // Gán token lên session
-        setSessionFlash("token_login", $token);
-        $data = [
-          'token' => $token,
-          'create_at'=> date('Y-m-d H:i:s'),
-          'user_id'=> $checkEmail['id'],
-        ];
-
-        $insertToken = insertData('token_login', $data);
-        if ($insertToken) {
-          setSessionFlash('msg', "Đăng nhập thành công.");
-          setSessionFlash('msg_type', "success");
-          redirect(("/"));
-        } else {
-          setSessionFlash('msg', "Đăng nhập không thành công.");
+        if ($checkAlready > 0) {
+          setSessionFlash('msg', "Tài khoản đang đăng nhập ở một nơi khác, vui lòng thử lại sau.");
           setSessionFlash('msg_type', "danger");
+          redirect("?module=auth&action=login");
+        } else {
+          // Tạo token insert vào token_login
+          $token = sha1(uniqid() . time());
+
+          // Gán token lên session 
+          setSessionFlash("token_login", $token);
+          $data = [
+            'token' => $token,
+            'create_at' => date('Y-m-d H:i:s'),
+            'user_id' => $checkEmail['id'],
+          ];
+
+          $insertToken = insertData('token_login', $data);
+          if ($insertToken) {
+            setSessionFlash('msg', "Đăng nhập thành công.");
+            setSessionFlash('msg_type', "success");
+            redirect(("/"));
+          } else {
+            setSessionFlash('msg', "Đăng nhập không thành công.");
+            setSessionFlash('msg_type', "danger");
+          }
         }
       } else {
-        setSessionFlash('msg', 'Dữ liệu không hợp lệ, hãy kiểm tra lại !!');
-      setSessionFlash('msg_type', 'danger');
+        setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào !!');
+        setSessionFlash('msg_type', 'danger');
       }
     }
-    setSessionFlash('msg', "Dữ liệu hợp lệ.");
-    setSessionFlash('msg_type', "success");
   } else {
-      setSessionFlash('msg', 'Dữ liệu không hợp lệ, hãy kiểm tra lại !!');
-      setSessionFlash('msg_type', 'danger');
-      setSessionFlash('oldData', $filter);
-      setSessionFlash('errors', $errors);
+    setSessionFlash('msg', 'Vui lòng kiểm tra lại dữ liệu nhập vào !!');
+    setSessionFlash('msg_type', 'danger');
+    setSessionFlash('oldData', $filter);
+    setSessionFlash('errors', $errors);
   }
-  $msg = getSessionFlash('msg');
-  $msg_type = getSessionFlash('msg_type');
-  $oldData = getSessionFlash('oldData');
-  $errorsArr = getSessionFlash('errors');
 }
-
-
+$msg = getSessionFlash('msg');
+$msg_type = getSessionFlash('msg_type');
+$oldData = getSessionFlash('oldData');
+$errorsArr = getSessionFlash('errors');
 ?>
 
 <section class="vh-100">
-  
+
   <div class="container-fluid h-custom">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-md-9 col-lg-6 col-xl-5">
@@ -92,7 +98,9 @@ if ((isPOST())) {
           alt="Sample image">
       </div>
       <div style="margin-bottom: 130px;" class="col-md-8 col-lg-6 col-xl-4 offset-xl-1 auth-box">
-        <?php if(!empty($msg) && !empty($msg_type)){ getMessage($msg, $msg_type); } ?>
+        <?php if (!empty($msg) && !empty($msg_type)) {
+          getMessage($msg, $msg_type);
+        } ?>
         <form method="POST" action="" enctype="multipart/form-data ">
           <div class="d-flex flex-column align-items-center justify-content-center my-4">
             <h2 class="fw-normal mb-5 me-3">Đăng nhập hệ thống</h2>
@@ -104,19 +112,25 @@ if ((isPOST())) {
 
           <!-- Email input -->
           <div data-mdb-input-init class="form-outline mb-4">
-            <input name='email' type="email" 
-              value="<?php if(!empty($oldData)){ echo oldData($oldData, 'email'); } ?>"
+            <input name='email' type="email"
+              value="<?php if (!empty($oldData)) {
+                        echo oldData($oldData, 'email');
+                      } ?>"
               class="form-control form-control-lg"
               placeholder="Nhập địa chỉ email" />
-              <?php if(!empty($errorsArr)){ echo formError($errorsArr, 'email');}?>
+            <?php if (!empty($errorsArr)) {
+              echo formError($errorsArr, 'email');
+            } ?>
           </div>
 
           <!-- Password input -->
           <div data-mdb-input-init class="form-outline mb-3">
-            <input name='password' type="password" 
+            <input name='password' type="password"
               class="form-control form-control-lg"
               placeholder="Nhập mật khẩu" />
-              <?php if(!empty($errorsArr)){ echo formError($errorsArr, 'password');}?>
+            <?php if (!empty($errorsArr)) {
+              echo formError($errorsArr, 'password');
+            } ?>
           </div>
 
           <div class="d-flex justify-content-between align-items-center">
