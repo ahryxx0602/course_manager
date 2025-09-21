@@ -127,11 +127,11 @@ if (isPOST()) {
     setSessionFlash('oldData', $filter);
     setSessionFlash('errors', $errors);
   }
-  $msg = getSessionFlash('msg');
-  $msg_type = getSessionFlash('msg_type');
-  $oldData = getSessionFlash('oldData');
-  $errorsArr = getSessionFlash('errors');
 }
+$msg = getSessionFlash('msg');
+$msg_type = getSessionFlash('msg_type');
+$oldData = getSessionFlash('oldData');
+$errorsArr = getSessionFlash('errors');
 ?>
 
 <section class="vh-100">
@@ -197,7 +197,7 @@ if (isPOST()) {
               echo formError($errorsArr, 'password');
             } ?>
           </div>
-          <!-- Password input -->
+          <!-- Confirm Password input -->
           <div data-mdb-input-init class="form-outline mb-4">
             <input name='confirmPassword' type="password" class="form-control form-control-lg"
               placeholder="Nhập lại mật khẩu" />
