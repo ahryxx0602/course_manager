@@ -18,16 +18,16 @@ require_once './includes/functions.php';
 
 $module = _MODULE_;
 $action = _ACTION_;
-if(!empty($_GET['module'])) {
+if (!empty($_GET['module'])) {
               $module = $_GET['module'];
 }
-if(!empty($_GET['action'])) {
+if (!empty($_GET['action'])) {
               $action = $_GET['action'];
 }
 
 $path = './modules/' . $module . '/' . $action . '.php';
-if(!empty($path)) {
-              if(file_exists($path)) {
+if (!empty($path)) {
+              if (file_exists($path)) {
                             require_once $path;
               } else {
                             require_once './modules/errors/404.php';
@@ -35,4 +35,3 @@ if(!empty($path)) {
 } else {
               require_once './modules/errors/505.php';
 }
-

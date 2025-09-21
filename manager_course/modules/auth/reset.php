@@ -1,11 +1,11 @@
 <?php
-if(!defined('_ROOT_PATH')) {
-    die('Truy cập không hợp lệ!');
+if (!defined('_ROOT_PATH')) {
+  die('Truy cập không hợp lệ!');
 }
-    $data = [
-      'title' => 'Đặt lại mật khẩu'
-    ];
-    layout("header-auth", $data);
+$data = [
+  'title' => 'Đặt lại mật khẩu'
+];
+layout("header-auth", $data);
 ?>
 <section class="vh-100">
   <div class="container-fluid h-custom">
@@ -30,13 +30,13 @@ if(!defined('_ROOT_PATH')) {
               placeholder="Nhập mật khẩu mới" />
           </div>
 
-            <!-- Password input -->
+          <!-- Password input -->
           <div data-mdb-input-init class="form-outline mb-3">
             <input type="password" class="form-control form-control-lg"
               placeholder="Nhập lại mật khẩu mới" />
           </div>
           <div class="text-center text-lg-start mt-4 pt-2">
-            <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
+            <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
               style="padding-left: 2.5rem; padding-right: 2.5rem;">Gửi</button>
           </div>
 
@@ -44,6 +44,6 @@ if(!defined('_ROOT_PATH')) {
       </div>
     </div>
   </div>
-<?php
-    layout("footer-auth");
-?>
+  <?php
+  layout("footer-auth");
+  ?>

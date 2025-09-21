@@ -1,11 +1,11 @@
 <?php
-if(!defined('_ROOT_PATH')) {
-    die('Truy cập không hợp lệ!');
+if (!defined('_ROOT_PATH')) {
+  die('Truy cập không hợp lệ!');
 }
-    $data = [
-      'title' => 'Quên mật khẩu'
-    ];
-    layout("header-auth", $data);
+$data = [
+  'title' => 'Quên mật khẩu'
+];
+layout("header-auth", $data);
 ?>
 <section class="vh-100">
   <div class="container-fluid h-custom">
@@ -30,7 +30,7 @@ if(!defined('_ROOT_PATH')) {
               placeholder="Nhập địa chỉ email" />
           </div>
           <div class="text-center text-lg-start mt-4 pt-2">
-            <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
+            <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
               style="padding-left: 2.5rem; padding-right: 2.5rem;">Gửi</button>
           </div>
 
@@ -38,6 +38,6 @@ if(!defined('_ROOT_PATH')) {
       </div>
     </div>
   </div>
-<?php
-    layout("footer-auth");
-?>
+  <?php
+  layout("footer-auth");
+  ?>
