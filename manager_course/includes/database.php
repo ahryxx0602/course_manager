@@ -93,17 +93,13 @@ function updateData($table, $data, $condition = '')
 function deleteData($table, $condition = '')
 {
     global $conn;
-
     if (!empty($condition)) {
         $sql = "DELETE FROM $table WHERE $condition";
     } else {
         $sql = "DELETE FROM $table";
     }
-
     $stm = $conn->prepare($sql);
-
     $rel = $stm->execute();
-
     return $rel;
 }
 

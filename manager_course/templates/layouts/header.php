@@ -111,7 +111,7 @@ if (!isLogin()) {
                 <a href="#" style="width: 100%;" class="btn btn-default btn-flat">Profile</a>
               </li>
               <li class="user-footer">
-                <a href="#" style="width: 100%;" class="btn btn-default btn-flat float-end">Sign out</a>
+                <a href="?module=auth&action=logout" style="width: 100%;" class="btn btn-default btn-flat float-end">Đăng xuất</a>
               </li>
               <!--end::Menu Footer-->
             </ul>

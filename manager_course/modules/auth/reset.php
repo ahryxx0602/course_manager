@@ -127,8 +127,9 @@ $errorsArr = getSessionFlash('errors');
           <div class="text-center text-lg-start mt-4 pt-2">
             <button type="sumit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg"
               style="padding-left: 2.5rem; padding-right: 2.5rem;">Gửi</button>
+            <p class="small fw-bold mt-2 pt-1 mb-0">Bạn chưa có tài khoản<a
+                href="<?php echo _HOST_URL; ?>?module=auth&action=login" class="link-danger">Quay lại Đăng nhập</a></p>
           </div>
-
         </form>
       </div>
     </div>
