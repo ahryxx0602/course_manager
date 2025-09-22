@@ -7,14 +7,49 @@ $data = [
 ];
 layout("header", $data);
 layout("sidebar");
+//manager_course/?module=users&action=list&group=1&keyword=Name Cấu trúc URL Tìm kiếm
+
+$filter = filterData();
+
+$chuoiWHERE = '';
+$group = 0;
+$keyword = '';
+if (isGET()) {
+    if (isset($filter['group'])) {
+        $group = $filter['group'];
+    }
+    if (isset($filter['keyword'])) {
+        $keyword = $filter['keyword'];
+    }
+    if (!empty($keyword)) {
+        if (strpos($chuoiWHERE, 'WHERE') == false) {
+            $chuoiWHERE .= " WHERE ";
+        } else {
+            $chuoiWHERE .= " AND";
+        }
+        $chuoiWHERE .= " fullName LIKE '%$keyword%' OR email LIKE '%$keyword%' ";
+    }
+    if (!empty($group)) {
+        if (strpos($chuoiWHERE, 'WHERE') == false) {
+            $chuoiWHERE .= " WHERE ";
+        } else {
+            $chuoiWHERE .= " AND ";
+        }
+        $chuoiWHERE .= "group_id = $group";
+    }
+}
+
 
 $getDetailUsers = getAll("
-    SELECT u.id, u.fullName, u.email, u.created_at, u.group_id, g.name AS group_name
+    SELECT  u.fullName, u.email, u.created_at, u.group_id, g.name AS group_name,
+    u.id, u.group_id
     FROM users u
     INNER JOIN `groups` g 
-    ON u.group_id = g.id
+    ON u.group_id = g.id $chuoiWHERE
     ORDER BY u.fullName ASC
 ");
+
+$getGroup = getAll("SELECT * FROM `groups`");
 ?>
 
 <div class="container mt-3">
@@ -23,16 +58,32 @@ $getDetailUsers = getAll("
             <i class="fa-solid fa-user-plus me-1"></i>Thêm mới người dùng
         </a>
         <form action="" method="get" class="mb-3">
+            <input type="hidden" name="module" value="users" />
+            <input type="hidden" name="action" value="list" />
+            <!--
+            <input type="hidden" name="module" value="users" />
+            <input type="hidden" name="action" value="list" />
+            Để url có dang là manager_course/?module=users&action=list&group=1&keyword=Name 
+            để phục vụ tìm kiếm
+            -->
             <div class=" row g-2">
                 <div class="col-md-3">
-                    <select name="" id="" class="form-select">
+                    <select name="group" id="" class="form-select">
                         <option selected disabled>Chọn nhóm người dùng</option>
-                        <option value="1">Quản trị viên</option>
-                        <option value="2">Người dùng</option>
+                        <?php foreach ($getGroup as $item): ?>
+                            <option value="<?php echo $item['id']; ?>"
+                                <?php echo ($group == $item['id']) ? 'selected' : ''; ?>>
+                                <!-- Nếu biến $group (giá trị nhóm hiện tại) == id của nhóm trong vòng lặp 
+                                thì thêm thuộc tính selected => option này sẽ được chọn mặc định -->
+                                <?php echo htmlspecialchars($item['name']); ?>
+                                <!-- Hiển thị tên nhóm ra giao diện. Dùng htmlspecialchars để tránh lỗi XSS -->
+                            </option>
+                        <?php endforeach; ?>
+
                     </select>
                 </div>
                 <div class="col-md-7">
-                    <input class="form-control" type="text" placeholder="Nhập thông tin tìm kiếm..." />
+                    <input value="<?php echo (!empty($keyword)) ? $keyword : false ?>" name="keyword" class="form-control" type="text" placeholder="Nhập thông tin tìm kiếm..." />
                 </div>
                 <div class="col-md-2 d-grid">
                     <button class="btn btn-primary" type="submit">
