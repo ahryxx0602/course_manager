@@ -14,9 +14,9 @@ const _DRIVER = 'mysql';
 const _DEBUG = true;
 
 // thiết lập host
-define('_HOST_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/manager_course/');
+define('_HOST_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/manager_course');
 
-define('_HOST_URL_TEMPLATES', _HOST_URL . 'templates/');
+define('_HOST_URL_TEMPLATES', _HOST_URL . '/templates/');
 
 // Thiết lập PATH
 define('_PATH_URL', __DIR__);
