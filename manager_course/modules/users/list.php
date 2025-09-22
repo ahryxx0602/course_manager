@@ -7,6 +7,14 @@ $data = [
 ];
 layout("header", $data);
 layout("sidebar");
+
+$getDetailUsers = getAll("
+    SELECT u.id, u.fullName, u.email, u.created_at, u.group_id, g.name AS group_name
+    FROM users u
+    INNER JOIN `groups` g 
+    ON u.group_id = g.id
+    ORDER BY u.fullName ASC
+");
 ?>
 
 <div class="container mt-3">
@@ -46,39 +54,48 @@ layout("sidebar");
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>@3</td>
-                    <td>4</td>
-                    <td>
-                        <a href="#" class="btn btn-success">
-                            <i class="fa-solid fa-user-shield me-1"></i> Phân quyền
-                        </a>
-                    </td>
-                    <td>
-                        <a href="#" class="btn btn-warning me-3">
-                            <i class="fa-solid fa-pen-to-square me-1"></i> Sửa
-                        </a>
-                        <a href="#" class="btn btn-danger">
-                            <i class="fa-solid fa-trash me-1"></i> Xóa
-                        </a>
-                    </td>
-                </tr>
+                <?php
+                foreach ($getDetailUsers as $key => $item):
+                ?>
+                    <tr>
+                        <th scope="row"><?php echo $key + 1; ?></th>
+                        <td><?php echo $item['fullName']; ?></td>
+                        <td><?php echo $item['email']; ?></td>
+                        <td><?php echo $item['created_at']; ?></td>
+                        <td><?php echo $item['group_id']; ?></td>
+                        <td>
+                            <a href="?module=users&action=permission&id=<?php echo $item['id']; ?>" class="btn btn-success">
+                                <i class="fa-solid fa-user-shield me-1"></i> Phân quyền
+                            </a>
+                        </td>
+                        <td>
+                            <a href="?module=users&action=edit&id=<?php echo $item['id']; ?>" class="btn btn-warning me-3">
+                                <i class="fa-solid fa-pen-to-square me-1"></i> Sửa
+                            </a>
+                            <a href="?module=users&action=delete&id=<?php echo $item['id']; ?>"
+                                onclick="return confirm('Có chắc chắn muốn xóa không ?')"
+                                class="btn btn-danger">
+                                <i class="fa-solid fa-trash me-1"></i> Xóa
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
-        </nav>
+        <div class="d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
 </div>
+
 
 <?php
 layout("footer");
