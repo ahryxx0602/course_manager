@@ -7,7 +7,9 @@ $data = [
 ];
 layout("header", $data);
 layout("sidebar");
-//manager_course/?module=users&action=list&group=1&keyword=Name Cấu trúc URL Tìm kiếm
+//manager_course/?module=users&action=list&group=1&keyword=Name&page=1 Cấu trúc URL Tìm kiếm
+
+//Phân trang: Trước ... 5,6,7, ... Sau
 
 $filter = filterData();
 
@@ -39,7 +41,24 @@ if (isGET()) {
     }
 }
 
+// Xử lí phân trang 
+$maxData = getRows("SELECT id FROM users");
+$perPage = 6; //Số dòng dữ liệu trênnn 1 trang
+$maxPages = ceil($maxData / $perPage); // Tính max page
+$offset = 0;
+$page = 1;
+//GEt page
+if (isset($filter["page"])) {
+    $page = $filter["page"];
+}
 
+if ($page > $maxPages || $page < 1) {
+    $page = 1;
+}
+
+//if (isset($page)) {
+$offset = ($page - 1) * $perPage;
+//}
 $getDetailUsers = getAll("
     SELECT  u.fullName, u.email, u.created_at, u.group_id, g.name AS group_name,
     u.id, u.group_id
@@ -47,6 +66,7 @@ $getDetailUsers = getAll("
     INNER JOIN `groups` g 
     ON u.group_id = g.id $chuoiWHERE
     ORDER BY u.fullName ASC
+    LIMIT $offset, $perPage
 ");
 
 $getGroup = getAll("SELECT * FROM `groups`");
@@ -136,11 +156,77 @@ $getGroup = getAll("SELECT * FROM `groups`");
         <div class="d-flex justify-content-center">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+
+                    <!-- Xử lí nút "Trước" -->
+                    <?php if ($page > 1): ?>
+                        <li class="page-item">
+                            <!-- Khi trang hiện tại > 1 thì cho phép lùi 1 trang -->
+                            <a class="page-link" href="?module=users&action=list&page=<?php echo $page - 1; ?>">
+                                Trước
+                            </a>
+                        </li>
+                    <?php endif ?>
+
+
+                    <!-- Tính vị trí trang bắt đầu (start = page - 1) -->
+                    <?php
+                    $start = $page - 1;
+                    if ($start < 1) {
+                        $start = 1; // Không cho nhỏ hơn 1
+                    }
+                    ?>
+
+                    <!-- Nếu start > 1 thì hiển thị dấu "..." để nhảy về cụm trang trước -->
+                    <?php if ($start > 1): ?>
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="?module=users&action=list&page=<?php echo 1; ?>">
+                                ...
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
+
+                    <!-- Tính vị trí trang kết thúc (end = page + 1) -->
+                    <?php
+                    $end = $page + 1;
+                    if ($end > $maxPages) {
+                        $end = $maxPages; // Không vượt quá tổng số trang
+                    }
+                    ?>
+
+
+                    <!-- Vòng lặp hiển thị các số trang từ $start đến $end -->
+                    <?php for ($i = $start; $i <= $end; $i++) : ?>
+                        <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                            <!-- Nếu $i == $page thì thêm class active -->
+                            <a class="page-link" href="?module=users&action=list&group=<?php echo $group; ?>&keyword=<?php echo urlencode($keyword); ?>&page=<?php echo $i; ?>">
+                                <?php echo $i; ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
+
+
+                    <!-- Nếu $end < $maxPages thì hiện dấu "..." để nhảy tới cụm sau -->
+                    <?php if ($end <= $maxPages): ?>
+                        <li class="page-item">
+                            <a class="page-link" href="?module=users&action=list&page=<?php echo $maxPages; ?>">
+                                ...
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
+
+                    <!-- Xử lí nút "Sau" -->
+                    <?php if ($page < $maxPages): ?>
+                        <li class="page-item">
+                            <!-- Khi chưa ở trang cuối thì cho phép nhảy sang trang tiếp -->
+                            <a class="page-link" href="?module=users&action=list&group=<?php echo $group; ?>&keyword=<?php echo urlencode($keyword); ?>&page=<?php echo $page + 1; ?>">
+                                Sau
+                            </a>
+                        </li>
+                    <?php endif ?>
+
                 </ul>
             </nav>
         </div>
