@@ -24,12 +24,12 @@ if (isGET()) {
         $keyword = $filter['keyword'];
     }
     if (!empty($keyword)) {
-        if (strpos($chuoiWHERE, 'WHERE') == false) {
+        if (strpos($chuoiWHERE, 'WHERE') === false) {
             $chuoiWHERE .= " WHERE ";
         } else {
             $chuoiWHERE .= " AND";
         }
-        $chuoiWHERE .= " fullName LIKE '%$keyword%' OR email LIKE '%$keyword%' ";
+        $chuoiWHERE .= " (u.fullName LIKE '%$keyword%' OR u.email LIKE '%$keyword%') ";
     }
     if (!empty($group)) {
         if (strpos($chuoiWHERE, 'WHERE') == false) {
@@ -37,7 +37,7 @@ if (isGET()) {
         } else {
             $chuoiWHERE .= " AND ";
         }
-        $chuoiWHERE .= "group_id = $group";
+        $chuoiWHERE .= " u.group_id = " . (int)$group;
     }
 }
 
@@ -70,6 +70,20 @@ $getDetailUsers = getAll("
 ");
 
 $getGroup = getAll("SELECT * FROM `groups`");
+
+//Xử lí queryy
+if (!empty($_SERVER['QUERY_STRING'])) {
+    $queryString = $_SERVER['QUERY_STRING'];
+    $queryString = str_replace('&page=' . $page, '', $queryString);
+}
+
+if ($group > 0 || !empty($keyword)) {
+    $maxData2 = getRows("
+    SELECT id
+    FROM users u $chuoiWHERE
+    ");
+    $maxPages = ceil($maxData2 / $perPage);
+}
 ?>
 
 <div class="container mt-3">
@@ -88,10 +102,10 @@ $getGroup = getAll("SELECT * FROM `groups`");
             -->
             <div class=" row g-2">
                 <div class="col-md-3">
-                    <select name="group" id="" class="form-select">
+                    <select name="group" id="" class="form-select" onchange="this.form.submit()">
                         <option selected disabled>Chọn nhóm người dùng</option>
                         <?php foreach ($getGroup as $item): ?>
-                            <option value="<?php echo $item['id']; ?>"
+                            <option value=" <?php echo $item['id']; ?>"
                                 <?php echo ($group == $item['id']) ? 'selected' : ''; ?>>
                                 <!-- Nếu biến $group (giá trị nhóm hiện tại) == id của nhóm trong vòng lặp 
                                 thì thêm thuộc tính selected => option này sẽ được chọn mặc định -->
@@ -133,7 +147,7 @@ $getGroup = getAll("SELECT * FROM `groups`");
                         <td><?php echo $item['fullName']; ?></td>
                         <td><?php echo $item['email']; ?></td>
                         <td><?php echo $item['created_at']; ?></td>
-                        <td><?php echo $item['group_id']; ?></td>
+                        <td><?php echo $item['group_name']; ?></td>
                         <td>
                             <a href="?module=users&action=permission&id=<?php echo $item['id']; ?>" class="btn btn-success">
                                 <i class="fa-solid fa-user-shield me-1"></i> Phân quyền
@@ -161,7 +175,7 @@ $getGroup = getAll("SELECT * FROM `groups`");
                     <?php if ($page > 1): ?>
                         <li class="page-item">
                             <!-- Khi trang hiện tại > 1 thì cho phép lùi 1 trang -->
-                            <a class="page-link" href="?module=users&action=list&page=<?php echo $page - 1; ?>">
+                            <a class="page-link" href="?<?php echo $queryString ?>&page=<?php echo $page - 1; ?>">
                                 Trước
                             </a>
                         </li>
@@ -180,7 +194,7 @@ $getGroup = getAll("SELECT * FROM `groups`");
                     <?php if ($start > 1): ?>
                         <li class="page-item">
                             <a class="page-link"
-                                href="?module=users&action=list&page=<?php echo 1; ?>">
+                                href="?<?php echo $queryString ?>&page=<?php echo 1; ?>">
                                 ...
                             </a>
                         </li>
@@ -200,7 +214,7 @@ $getGroup = getAll("SELECT * FROM `groups`");
                     <?php for ($i = $start; $i <= $end; $i++) : ?>
                         <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
                             <!-- Nếu $i == $page thì thêm class active -->
-                            <a class="page-link" href="?module=users&action=list&group=<?php echo $group; ?>&keyword=<?php echo urlencode($keyword); ?>&page=<?php echo $i; ?>">
+                            <a class="page-link" href="?<?php echo $queryString ?>&page=<?php echo $i; ?>">
                                 <?php echo $i; ?>
                             </a>
                         </li>
@@ -210,7 +224,7 @@ $getGroup = getAll("SELECT * FROM `groups`");
                     <!-- Nếu $end < $maxPages thì hiện dấu "..." để nhảy tới cụm sau -->
                     <?php if ($end <= $maxPages): ?>
                         <li class="page-item">
-                            <a class="page-link" href="?module=users&action=list&page=<?php echo $maxPages; ?>">
+                            <a class="page-link" href="?<?php echo $queryString ?>&page=<?php echo $maxPages; ?>">
                                 ...
                             </a>
                         </li>
@@ -221,7 +235,7 @@ $getGroup = getAll("SELECT * FROM `groups`");
                     <?php if ($page < $maxPages): ?>
                         <li class="page-item">
                             <!-- Khi chưa ở trang cuối thì cho phép nhảy sang trang tiếp -->
-                            <a class="page-link" href="?module=users&action=list&group=<?php echo $group; ?>&keyword=<?php echo urlencode($keyword); ?>&page=<?php echo $page + 1; ?>">
+                            <a class="page-link" href="?<?php echo $queryString ?>&page=<?php echo $page + 1; ?>">
                                 Sau
                             </a>
                         </li>
