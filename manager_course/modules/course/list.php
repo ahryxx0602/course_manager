@@ -8,7 +8,7 @@ $data = [
 layout("header", $data);
 layout("sidebar");
 
-// manager_course/?module=courses&action=list&category=1&keyword=PHP&page=1
+// manager_course/?module=course&action=list&category=1&keyword=PHP&page=1
 
 $filter = filterData();
 
@@ -92,7 +92,7 @@ $msg_type = getSessionFlash('msg_type');
         </a>
 
         <form action="" method="get" class="mb-3">
-            <input type="hidden" name="module" value="courses" />
+            <input type="hidden" name="module" value="course" />
             <input type="hidden" name="action" value="list" />
             <div class=" row g-2">
                 <div class="col-md-3">
@@ -124,7 +124,6 @@ $msg_type = getSessionFlash('msg_type');
                     <th scope="col">STT</th>
                     <th scope="col">Thumbnail</th>
                     <th scope="col">Tên khóa học</th>
-                    <th scope="col">Slug</th>
                     <th scope="col">Giá</th>
                     <th scope="col">Lĩnh vực</th>
                     <th scope="col">Ngày tạo</th>
@@ -139,7 +138,7 @@ $msg_type = getSessionFlash('msg_type');
                         <!-- Thumbnail -->
                         <td>
                             <?php
-                            $thumbPath = !empty($item['thumbnail']) ? _HOST_URL . $item['thumbnail'] : _HOST_URL . '/uploads/courses/default-thumbnail.jpg';
+                            $thumbPath = !empty($item['thumbnail']) ? _HOST_URL . $item['thumbnail'] : _HOST_URL . '/uploads/course/default-thumbnail.jpg';
                             ?>
                             <img src="<?php echo $thumbPath; ?>"
                                 alt="thumb"
@@ -149,9 +148,6 @@ $msg_type = getSessionFlash('msg_type');
 
                         <!-- Tên khóa học -->
                         <td><?php echo htmlspecialchars($item['name']); ?></td>
-
-                        <!-- Slug -->
-                        <td><?php echo htmlspecialchars($item['slug']); ?></td>
 
                         <!-- Giá -->
                         <td><?php echo number_format($item['price']); ?> đ</td>
