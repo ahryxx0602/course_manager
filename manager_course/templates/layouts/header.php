@@ -6,6 +6,18 @@ if (!defined('_ROOT_PATH')) {
 if (!isLogin()) {
   redirect('?module=auth&action=login');
 }
+$token = getSession('token_login');
+if (!empty($token)) {
+  $checkTokenLogin = getOne("SELECT * FROM token_login WHERE token ='$token'");
+  if (!empty($checkTokenLogin)) {
+    $user_id = $checkTokenLogin['user_id'];
+    $getUserDetail = getOne("SELECT fullName, avatar FROM users WHERE id = '$user_id'");
+    if (!empty($getUserDetail)) {
+      $nameUser = $getUserDetail["fullName"];
+      $avatarUser = $getUserDetail["avatar"];
+    }
+  }
+}
 ?>
 
 
@@ -89,27 +101,27 @@ if (!isLogin()) {
           <li class="nav-item dropdown user-menu">
             <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
               <img
-                src="../../dist/assets/img/user2-160x160.jpg"
+                src="<?php echo _HOST_URL; ?><?php echo isset($avatarUser) ? $avatarUser : false; ?>"
                 class="user-image rounded-circle shadow"
                 alt="User Image" />
-              <span class="d-none d-md-inline">Alexander Pierce</span>
+              <span class="d-none d-md-inline"><?php echo isset($nameUser) ? $nameUser : false; ?></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
               <!--begin::User Image-->
               <li class="user-header text-bg-primary">
                 <img
-                  src="../../dist/assets/img/user2-160x160.jpg"
+                  src="<?php echo _HOST_URL; ?><?php echo isset($avatarUser) ? $avatarUser : false; ?>"
                   class="rounded-circle shadow"
                   alt="User Image" />
                 <p>
-                  Alexander Pierce - Web Developer
+                  <?php echo isset($nameUser) ? $nameUser : false; ?>
                   <small>Member since Nov. 2023</small>
                 </p>
               </li>
               <!--end::User Image-->
               <!--begin::Menu Footer-->
               <li class="user-footer">
-                <a href="#" style="width: 100%;" class="btn btn-default btn-flat">Profile</a>
+                <a href="?module=users&action=profile" style="width: 100%;" class="btn btn-default btn-flat">Profile</a>
               </li>
               <li class="user-footer">
                 <a href="?module=auth&action=logout" style="width: 100%;" class="btn btn-default btn-flat float-end">Đăng xuất</a>
