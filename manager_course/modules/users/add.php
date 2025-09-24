@@ -74,7 +74,7 @@ if (isPOST()) {
 
         $now = date('Y-m-d H:i:s');
 
-        $data = [
+        $dataInsert = [
             'fullName'     => $fullName,
             'email'        => $email,
             'phone'        => $phone,
@@ -87,7 +87,7 @@ if (isPOST()) {
             'created_at'   => $now,
             'updated_at'   => $now,
         ];
-        $insertStatus =  insertData('users', $data);
+        $insertStatus =  insertData('users', $dataInsert);
         if ($insertStatus) {
             setSessionFlash('msg', 'Thêm người dùng thành công');
             setSessionFlash('msg_type', 'success');
