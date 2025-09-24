@@ -15376,4 +15376,14 @@ html.maximized-card {
   width: 32px;
 }
 
+.error {
+  position: absolute;
+  line-height: 1.2;
+  font-size: 0.85rem;
+  color: #dc3545;
+  font-style: italic;
+  pointer-events: none;
+  text-overflow: ellipsis;
+}
+
 /*# sourceMappingURL=adminlte.css.map */

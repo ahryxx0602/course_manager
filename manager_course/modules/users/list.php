@@ -84,13 +84,20 @@ if ($group > 0 || !empty($keyword)) {
     ");
     $maxPages = ceil($maxData2 / $perPage);
 }
+$msg = getSessionFlash('msg');
+$msg_type = getSessionFlash('msg_type');
 ?>
 
 <div class="container mt-3">
     <div class="container-fluid">
+        <?php if (!empty($msg) && !empty($msg_type)) {
+            getMessage($msg, $msg_type);
+        } ?>
+        <hr />
         <a href="?module=users&action=add" class="btn btn-primary mb-3">
             <i class="fa-solid fa-user-plus me-1"></i>Thêm mới người dùng
         </a>
+
         <form action="" method="get" class="mb-3">
             <input type="hidden" name="module" value="users" />
             <input type="hidden" name="action" value="list" />
