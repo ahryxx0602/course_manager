@@ -7,26 +7,7 @@ $data = ['title' => 'Thêm mới khóa học'];
 layout("header", $data);
 layout("sidebar");
 
-$thumbnail = '/uploads/courses/default-thumbnail.jpg'; // default
-
-if (!empty($_FILES['thumbnail']['name'])) {
-    $uploadDir = '/uploads/courses/';
-    $uploadPath = _PATH_URL . $uploadDir; // define _PATH_URL là thư mục gốc
-
-    $fileName = time() . '-' . basename($_FILES['thumbnail']['name']);
-    $targetFile = $uploadPath . $fileName;
-
-    $isImage = getimagesize($_FILES['thumbnail']['tmp_name']);
-    if ($isImage !== false) {
-        if (move_uploaded_file($_FILES['thumbnail']['tmp_name'], $targetFile)) {
-            $thumbnail = $uploadDir . $fileName;
-        } else {
-            $errors['thumbnail']['upload'] = "Không thể tải ảnh lên.";
-        }
-    } else {
-        $errors['thumbnail']['invalid'] = "File không phải là ảnh hợp lệ.";
-    }
-}
+$upload = upload_image('thumbnail');
 function toSlug($str)
 {
     // chuẩn hoá rất cơ bản, đủ dùng
@@ -54,28 +35,32 @@ if (isPOST()) {
         $errors['name']['length'] = "Tên khóa học phải từ 3 ký tự.";
     }
 
-    // Validate slug (tự sinh nếu trống)
+    // Slug
     $slug = trim($filter['slug'] ?? '');
-    if (empty($slug) && !empty($filter['name'])) {
+    if ($slug === '' && !empty($filter['name'])) {
         $slug = toSlug($filter['name']);
     }
-    if (empty($slug)) {
+    if ($slug === '') {
         $errors['slug']['require'] = "Slug bắt buộc phải nhập.";
+    } else {
+        $exists = getRows("SELECT id FROM courses WHERE slug = '$slug'");
+        if ($exists > 0) {
+            $errors['slug']['unique'] = "Slug đã tồn tại, vui lòng chọn slug khác.";
+        }
     }
 
-    // Validate category_id
+    // Category
     $category_id = (int)($filter['category_id'] ?? 0);
     if ($category_id <= 0) {
         $errors['category_id']['require'] = "Vui lòng chọn danh mục khóa học.";
     } else {
-        // kiểm tra category có tồn tại
-        $catRows = getRows("SELECT id FROM course_category WHERE id = $category_id");
-        if ($catRows <= 0) {
+        $cat = getRows("SELECT id FROM course_category WHERE id = $category_id");
+        if ($cat <= 0) {
             $errors['category_id']['exist'] = "Danh mục không tồn tại.";
         }
     }
 
-    // Validate price
+    // Price
     $price = $filter['price'] ?? '';
     if ($price === '' || $price === null) {
         $errors['price']['require'] = "Giá khóa học bắt buộc phải nhập.";
@@ -85,41 +70,35 @@ if (isPOST()) {
         $price = (float)$price;
     }
 
-    // Description (optional)
+    // Description
     $description = trim($filter['description'] ?? '');
 
-    // Thumbnail (optional) – có thể để mặc định
-    $thumbnail = trim($filter['thumbnail'] ?? '');
-    if (empty($thumbnail)) {
-        $thumbnail = '/uploads/courses/default-thumbnail.jpg';
-    }
-
-    // Check slug unique (tuỳ DB đã index unique hay chưa)
-    if (empty($errors['slug'])) {
-        $checkSlug = getRows("SELECT id FROM courses WHERE slug = '$slug'");
-        if ($checkSlug > 0) {
-            $errors['slug']['unique'] = "Slug đã tồn tại, vui lòng chọn slug khác.";
-        }
+    // Thumb
+    $thumbnailRel = '/uploads/courses/default-thumbnail.jpg';
+    if ($upload === false) {
+        $errors['thumbnail']['upload'] = 'Upload ảnh thất bại hoặc file không hợp lệ.';
+    } elseif ($upload) {
+        $thumbnailRel = $upload;
     }
 
     if (empty($errors)) {
         $now = date('Y-m-d H:i:s');
         $dataInsert = [
-            'name'       => trim($filter['name']),
-            'slug'       => $slug,
+            'name'        => trim($filter['name']),
+            'slug'        => $slug,
             'category_id' => $category_id,
             'description' => $description ?: null,
-            'price'      => $price,
-            'thumbnail'  => $thumbnail,
-            'create_at'  => $now,
-            'update_at'  => $now,
+            'price'       => $price,
+            'thumbnail'   => $thumbnailRel,  // dùng đúng biến đã upload/mặc định
+            'create_at'   => $now,
+            'update_at'   => $now,
         ];
 
-        $insertStatus = insertData('courses', $dataInsert);
-        if ($insertStatus) {
+        $ok = insertData('courses', $dataInsert);
+        if ($ok) {
             setSessionFlash('msg', 'Thêm khóa học thành công');
             setSessionFlash('msg_type', 'success');
-            redirect('?module=courses&action=list');
+            redirect('?module=course&action=list');
         } else {
             setSessionFlash('msg', 'Dữ liệu không hợp lệ, hãy kiểm tra lại !!');
             setSessionFlash('msg_type', 'danger');
@@ -131,6 +110,7 @@ if (isPOST()) {
         setSessionFlash('errors', $errors);
     }
 }
+
 
 $msg = getSessionFlash('msg');
 $msg_type = getSessionFlash('msg_type');
@@ -194,12 +174,17 @@ $categories = getAll("SELECT id, name FROM course_category ORDER BY name ASC");
                 <label for="thumbnail">Ảnh đại diện (upload)</label>
                 <input id="thumbnail" name="thumbnail" type="file" class="form-control" accept="image/*"
                     onchange="previewImage(event)" />
-                <?php echo formError($errorsArr, 'thumbnail'); ?>
-
                 <div class="mt-2">
-                    <img id="preview" src="<?php echo !empty($oldData['thumbnail']) ? $oldData['thumbnail'] : ''; ?>"
-                        alt="Preview" style="max-width: 200px; max-height: 200px; display: <?php echo !empty($oldData['thumbnail']) ? 'block' : 'none'; ?>;" />
+                    <?php
+                    $oldThumbRel = !empty($oldData['thumbnail']) ? $oldData['thumbnail'] : '';
+                    $oldThumbAbs = $oldThumbRel ? (_HOST_URL . $oldThumbRel) : '';
+                    ?>
+                    <img id="preview"
+                        src="<?php echo $oldThumbAbs; ?>"
+                        alt="Preview"
+                        style="max-width:200px;max-height:200px;display:<?php echo $oldThumbAbs ? 'block' : 'none'; ?>;" />
                 </div>
+
             </div>
 
             <div class="col-12 mb-3">
@@ -214,7 +199,7 @@ $categories = getAll("SELECT id, name FROM course_category ORDER BY name ASC");
 
         <div class="d-flex mt-4 mb-3">
             <button type="submit" class="btn btn-success me-2">Xác nhận</button>
-            <a href="?module=courses&action=list" class="btn btn-primary">Quay lại</a>
+            <a href="?module=course&action=list" class="btn btn-primary">Quay lại</a>
         </div>
     </form>
 </div>

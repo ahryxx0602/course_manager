@@ -9,6 +9,7 @@ $data = [
 layout("header", $data);
 layout("sidebar");
 
+$upload = upload_image('thumbnail');
 $getData = filterData('get');
 
 if (!empty($getData['id'])) {
@@ -65,15 +66,11 @@ if (isPOST()) {
     $description = trim($filter['description'] ?? '');
 
     $thumbnail = $detailCourse['thumbnail'];
-    if (!empty($_FILES['thumbnail']['name'])) {
-        $uploadDir = _PATH_URL . '/uploads/courses/';
-        $fileName = time() . '_' . basename($_FILES['thumbnail']['name']);
-        $targetFile = $uploadDir . $fileName;
-        if (move_uploaded_file($_FILES['thumbnail']['tmp_name'], $targetFile)) {
-            $thumbnail = '/uploads/courses/' . $fileName;
-        } else {
-            $errors['thumbnail']['upload'] = "Upload ảnh thất bại.";
-        }
+    $thumbnail = '/uploads/courses/default-thumbnail.jpg';
+    if ($upload === false) {
+        $errors['thumbnail']['upload'] = 'Upload ảnh thất bại hoặc file không hợp lệ.';
+    } elseif ($upload) {
+        $thumbnail = $upload;
     }
 
     if (empty($errors)) {

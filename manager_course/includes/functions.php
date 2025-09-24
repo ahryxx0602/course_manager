@@ -215,3 +215,20 @@ function isLogin()
     }
     return $checkLogin;
 }
+
+function upload_image(string $field, string $dirRel = '/uploads/courses/')
+{
+    if (empty($_FILES[$field]['name'])) return null;
+
+    $dirDisk = rtrim(_PATH_URL, '/\\') . $dirRel;
+    is_dir($dirDisk) || mkdir($dirDisk, 0755, true);
+
+    $tmp  = $_FILES[$field]['tmp_name'];
+    $ext  = strtolower(pathinfo($_FILES[$field]['name'], PATHINFO_EXTENSION));
+    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'], true) || !@getimagesize($tmp)) return false;
+
+    $safe = preg_replace('/[^a-zA-Z0-9\-\_\.]/', '_', pathinfo($_FILES[$field]['name'], PATHINFO_FILENAME));
+    $name = time() . '_' . $safe . '.' . $ext;
+
+    return move_uploaded_file($tmp, $dirDisk . $name) ? ($dirRel . $name) : false;
+}
