@@ -53,7 +53,7 @@ if ($page > $maxPages || $page < 1) {
 $offset = ($page - 1) * $perPage;
 
 $getDetailCourses = getAll("
-    SELECT c.id, c.name, c.slug, c.price, c.create_at, cat.name AS category_name
+    SELECT c.id, c.name, c.slug, c.price, c.create_at, c.thumbnail, cat.name AS category_name
     FROM courses c
     INNER JOIN course_category cat 
     ON c.category_id = cat.id $chuoiWHERE
@@ -87,7 +87,7 @@ $msg_type = getSessionFlash('msg_type');
             getMessage($msg, $msg_type);
         } ?>
         <hr />
-        <a href="?module=courses&action=add" class="btn btn-primary mb-3">
+        <a href="?module=course&action=add" class="btn btn-primary mb-3">
             <i class="fa-solid fa-plus me-1"></i> Thêm mới khóa học
         </a>
 
@@ -122,11 +122,12 @@ $msg_type = getSessionFlash('msg_type');
             <thead>
                 <tr>
                     <th scope="col">STT</th>
+                    <th scope="col">Thumbnail</th>
                     <th scope="col">Tên khóa học</th>
                     <th scope="col">Slug</th>
                     <th scope="col">Giá</th>
+                    <th scope="col">Lĩnh vực</th>
                     <th scope="col">Ngày tạo</th>
-                    <th scope="col">Danh mục</th>
                     <th scope="col">Hành động</th>
                 </tr>
             </thead>
@@ -134,11 +135,30 @@ $msg_type = getSessionFlash('msg_type');
                 <?php foreach ($getDetailCourses as $key => $item): ?>
                     <tr>
                         <th scope="row"><?php echo $key + 1; ?></th>
+
+                        <!-- Thumbnail -->
+                        <td>
+                            <img src="<?php echo htmlspecialchars($item['thumbnail'] ?? '/uploads/courses/default-thumbnail.jpg'); ?>"
+                                alt="thumb"
+                                style="max-width: 100px; max-height: 70px; object-fit: cover; border-radius: 4px;">
+                        </td>
+
+                        <!-- Tên khóa học -->
                         <td><?php echo htmlspecialchars($item['name']); ?></td>
+
+                        <!-- Slug -->
                         <td><?php echo htmlspecialchars($item['slug']); ?></td>
+
+                        <!-- Giá -->
                         <td><?php echo number_format($item['price']); ?> đ</td>
-                        <td><?php echo $item['create_at']; ?></td>
+
+                        <!-- Lĩnh vực -->
                         <td><?php echo htmlspecialchars($item['category_name']); ?></td>
+
+                        <!-- Ngày tạo -->
+                        <td><?php echo $item['create_at']; ?></td>
+
+                        <!-- Hành động -->
                         <td>
                             <a href="?module=courses&action=edit&id=<?php echo $item['id']; ?>" class="btn btn-warning me-3">
                                 <i class="fa-solid fa-pen-to-square me-1"></i> Sửa

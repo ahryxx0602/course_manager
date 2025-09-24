@@ -81,6 +81,7 @@ if (!defined('_ROOT_PATH')) {
     cardHeader.style.cursor = 'move';
   });
 </script>
+<script src="manager_course\templates\assets\js\ImagePreview.js"></script>
 </body>
 <!--end::Body-->
 
