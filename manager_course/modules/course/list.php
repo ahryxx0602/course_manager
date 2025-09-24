@@ -138,9 +138,13 @@ $msg_type = getSessionFlash('msg_type');
 
                         <!-- Thumbnail -->
                         <td>
-                            <img src="<?php echo htmlspecialchars($item['thumbnail'] ?? '/uploads/courses/default-thumbnail.jpg'); ?>"
+                            <?php
+                            $thumbPath = !empty($item['thumbnail']) ? _HOST_URL . $item['thumbnail'] : _HOST_URL . '/uploads/courses/default-thumbnail.jpg';
+                            ?>
+                            <img src="<?php echo $thumbPath; ?>"
                                 alt="thumb"
                                 style="max-width: 100px; max-height: 70px; object-fit: cover; border-radius: 4px;">
+
                         </td>
 
                         <!-- Tên khóa học -->
@@ -160,10 +164,10 @@ $msg_type = getSessionFlash('msg_type');
 
                         <!-- Hành động -->
                         <td>
-                            <a href="?module=courses&action=edit&id=<?php echo $item['id']; ?>" class="btn btn-warning me-3">
+                            <a href="?module=course&action=edit&id=<?php echo $item['id']; ?>" class="btn btn-warning me-3">
                                 <i class="fa-solid fa-pen-to-square me-1"></i> Sửa
                             </a>
-                            <a href="?module=courses&action=delete&id=<?php echo $item['id']; ?>"
+                            <a href="?module=course&action=delete&id=<?php echo $item['id']; ?>"
                                 onclick="return confirm('Có chắc chắn muốn xóa không ?')"
                                 class="btn btn-danger">
                                 <i class="fa-solid fa-trash me-1"></i> Xóa
