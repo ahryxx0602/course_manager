@@ -203,5 +203,24 @@ $categories = getAll("SELECT id, name FROM course_category ORDER BY name ASC");
         </div>
     </form>
 </div>
+<script>
+    function createSlug(s) {
+        return s.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // bỏ dấu
+            .replace(/đ/g, 'd') // đ -> d
+            .replace(/[^a-z0-9\s-]/g, '') // bỏ ký tự lạ
+            .trim().replace(/\s+/g, '-') // khoảng trắng -> -
+            .replace(/-+/g, '-'); // gộp dấu -
+    }
+
+    const nameEl = document.getElementById('name');
+    const slugEl = document.getElementById('slug');
+
+    if (nameEl && slugEl) {
+        nameEl.addEventListener('input', function() {
+            slugEl.value = createSlug(this.value);
+        });
+    }
+</script>
 
 <?php layout("footer"); ?>
